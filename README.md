@@ -1,2 +1,2 @@
 # VSA-Project
-Uhhhhhhhh uuhhmmmmmm
+Implimentation of Linked Lists using hyper dimensional computing principles.
