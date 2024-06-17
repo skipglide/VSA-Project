@@ -3,6 +3,29 @@ from numpy.random import randint
 import jax.numpy as jnp
 from jax import device_put, random, jit
 
+def bundle(**args):
+  for x in args:
+    pass
+
+@jax.jit
+def permute_forward(x, p):
+  return jnp.dot(p, x)
+
+@jax.jit
+def permute_inverse(x, p):
+  return jnp.dot(p.T, x)
+
+@jax.jit
+def generate_permutation_matrix(n):
+    # Create an identity matrix
+    identity = jnp.eye(n)
+    
+    # Generate random permutation indices
+    perm = jax.random.permutation(generate_key(), n)
+    
+    # Use the permutation to shuffle the rows of the identity matrix
+    return identity[perm]
+
 def generate_symbol(number: int, dimensionality: int):
   return random.uniform(generate_key(), minval=-1.0, maxval=1.0, shape=(number, dimensionality))
 
