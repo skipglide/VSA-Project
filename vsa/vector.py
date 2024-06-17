@@ -27,6 +27,30 @@ def similarity(a,b):
     similarity = jnp.mean(jnp.cos(a - b), axis=1)
     return similarity
 
+class LookUpMemory:
+  def __init__(self):
+    self.memory = dict()
+    self.dimensionality = d
+
+  def add_association(self, x, a):
+    # device_put turns a JAX array into a hashable type so the dictionary can use it as a key value
+    self.memory[x] = a
+  
+  def return_simularity(self, x):
+    # This is a naive implimentation until I incorporate annoy
+    result = []
+    for association in self.memory:
+      a = tuple_to_jax_array(association[0])
+      result.append((simularity(x, a), a))
+    return result
+  
+  def retrieve_value(self, x):
+      try:
+          return self.memory[x]
+      except KeyError:
+          print("No value")
+          return None
+
 class CleanUpMemory:
   def __init__(self, d):
     self.memory = set()
