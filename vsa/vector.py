@@ -3,9 +3,23 @@ from numpy.random import randint
 import jax.numpy as jnp
 from jax import device_put, random, jit
 
-def bundle(**args):
-  for x in args:
-    pass
+def link(a, b):
+  pass
+
+def bundle(*symbols):
+    symbols = jnp.stack(symbols, axis=0)
+    #convert each angle to a complex number
+    pi = jnp.pi
+    j = jnp.array([0+1j])
+
+    #sum the complex numbers to find the bundled vector
+    cmpx = jnp.exp(pi * j * symbols)
+    bundle = jnp.sum(cmpx, axis=0)
+    #convert the complex sum back to an angle
+    bundle = jnp.angle(bundle) / pi
+    bundle = jnp.reshape(bundle, (1, -1))
+
+    return bundle
 
 @jax.jit
 def permute_forward(x, p):
@@ -26,8 +40,8 @@ def generate_permutation_matrix(n):
     # Use the permutation to shuffle the rows of the identity matrix
     return identity[perm]
 
-def generate_symbol(number: int, dimensionality: int):
-  return random.uniform(generate_key(), minval=-1.0, maxval=1.0, shape=(number, dimensionality))
+def generate_symbol(dimensionality: int):
+  return random.uniform(generate_key(), minval=-1.0, maxval=1.0, shape=(1, dimensionality))
 
 def generate_key():
   seed = randint(0, 2**32)
@@ -55,8 +69,12 @@ class LookUpMemory:
     self.memory = dict()
     self.dimensionality = d
 
+  def add(self, a):
+    x = generate_symbol(d)
+    self.memory[x] = a
+    return x
+
   def add_association(self, x, a):
-    # device_put turns a JAX array into a hashable type so the dictionary can use it as a key value
     self.memory[x] = a
   
   def return_simularity(self, x):
@@ -79,9 +97,9 @@ class CleanUpMemory:
     self.memory = set()
     self.dimensionality = d
   
-  def add(self, x):
-    # device_put turns a JAX array into a hashable type so the dictionary can use it as a key value
-    self.memory.add(x)
+  def add(self, *args):
+    for x in args:
+      self.memory.add(x)
   
   def check_memory(self, x):
     """
