@@ -1,4 +1,4 @@
-from vsa.vector import CleanUpMemory, permute_forward, permute_inverse, generate_permutation, generate_symbol, generate_key, simularity
+from vsa.vector import LookUpMemory, CleanUpMemory, permute_forward, permute_inverse, generate_permutation, generate_symbol, generate_key, similarity
 
 d = 100
 
