@@ -64,14 +64,28 @@ def similarity(a,b):
     similarity = jnp.mean(jnp.cos(a - b), axis=1)
     return similarity
 
+class SymbolLibrary:
+  def __init__(self, d):
+    self.library = dict()
+    self.dimensionality = d
+  
+  def already_there(self, x):
+    if x in self.memory.keys():
+      return True
+    else:
+      return False
+  
+  def add_key(self, key):
+    self.memory[key] = generate_symbol(self.dimensionality)
+
 class LookUpMemory:
   def __init__(self, d):
     self.memory = dict()
     self.dimensionality = d
 
-  def add(self, a):
-    x = generate_symbol(d)
-    self.memory[x] = a
+  def add_symbol(self, a):
+    x = generate_symbol(self.dimensionality)
+    self.memory[jax_array_to_tuple(x)] = a
     return x
 
   def add_association(self, x, a):
