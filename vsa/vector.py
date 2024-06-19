@@ -21,16 +21,16 @@ def bundle(*symbols):
 
     return bundle
 
-@jax.jit
+@jit
 def permute_forward(x, p):
   return jnp.dot(p, x)
 
-@jax.jit
+@jit
 def permute_inverse(x, p):
   return jnp.dot(p.T, x)
 
-@jax.jit
-def generate_permutation_matrix(n):
+@jit
+def generate_permutation(n):
     # Create an identity matrix
     identity = jnp.eye(n)
     
@@ -65,7 +65,7 @@ def similarity(a,b):
     return similarity
 
 class LookUpMemory:
-  def __init__(self):
+  def __init__(self, d):
     self.memory = dict()
     self.dimensionality = d
 
@@ -99,7 +99,7 @@ class CleanUpMemory:
   
   def add(self, *args):
     for x in args:
-      self.memory.add(x)
+      self.memory.add(jax_array_to_tuple(x))
   
   def check_memory(self, x):
     """
