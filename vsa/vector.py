@@ -1,67 +1,56 @@
-from numpy.random import randint
-
-import jax.numpy as jnp
-from jax import device_put, random, jit
+import numpy as np
 
 def link(a, b):
   pass
 
 def bundle(*symbols):
-    symbols = jnp.stack(symbols, axis=0)
+    symbols = np.stack(symbols, axis=0)
     #convert each angle to a complex number
-    pi = jnp.pi
-    j = jnp.array([0+1j])
+    pi = np.pi
+    j = np.array([0+1j])
 
     #sum the complex numbers to find the bundled vector
-    cmpx = jnp.exp(pi * j * symbols)
-    bundle = jnp.sum(cmpx, axis=0)
+    cmpx = np.exp(pi * j * symbols)
+    bundle = np.sum(cmpx, axis=0)
     #convert the complex sum back to an angle
-    bundle = jnp.angle(bundle) / pi
-    bundle = jnp.reshape(bundle, (1, -1))
+    bundle = np.angle(bundle) / pi
+    bundle = np.reshape(bundle, (1, -1))
 
     return bundle
 
-@jit
 def permute_forward(x, p):
-  return jnp.dot(p, x)
+  return np.dot(p, x)
 
-@jit
 def permute_inverse(x, p):
-  return jnp.dot(p.T, x)
+  return np.dot(p.T, x)
 
-@jit
 def generate_permutation(n):
     # Create an identity matrix
-    identity = jnp.eye(n)
+    identity = np.eye(n)
     
     # Generate random permutation indices
-    perm = jax.random.permutation(generate_key(), n)
+    perm = np.random.permutation(generate_key(), n)
     
     # Use the permutation to shuffle the rows of the identity matrix
     return identity[perm]
 
 def generate_symbol(dimensionality: int):
-  return random.uniform(generate_key(), minval=-1.0, maxval=1.0, shape=(1, dimensionality))
+  return np.random.uniform(minval=-1.0, maxval=1.0, shape=(1, dimensionality))
 
-def generate_key():
-  seed = randint(0, 2**32)
-  return random.PRNGKey(seed)
-
-def jax_array_to_tuple(arr):
+def array_to_tuple(arr):
     return tuple(arr)
 
-def tuple_to_jax_array(tup):
-    return jnp.array(tup, dtype=jnp.float32)
+def tuple_to_array(tup):
+    return np.array(tup, dtype=np.float32)
 
-@jit
 def similarity(a,b):
     assert a.shape[-1] == b.shape[-1], "VSA Dimension must match: " + str(a.shape) + " " + str(b.shape)
     #multiply values by pi to move from (-1, 1) to (-π, π)
-    pi = jnp.pi
+    pi = np.pi
     a = jnp.multiply(a, pi)
     b = jnp.multiply(b, pi)
     #calculate the mean cosine similarity between the vectors
-    similarity = jnp.mean(jnp.cos(a - b), axis=1)
+    similarity = np.mean(np.cos(a - b), axis=1)
     return similarity
 
 class SymbolLibrary:
@@ -85,7 +74,7 @@ class LookUpMemory:
 
   def add_symbol(self, a):
     x = generate_symbol(self.dimensionality)
-    self.memory[jax_array_to_tuple(x)] = a
+    self.memory[array_to_tuple(x)] = a
     return x
 
   def add_association(self, x, a):
@@ -95,7 +84,7 @@ class LookUpMemory:
     # This is a naive implimentation until I incorporate annoy
     result = []
     for association in self.memory:
-      a = tuple_to_jax_array(association[0])
+      a = tuple_to_array(association[0])
       result.append((simularity(x, a), a))
     return result
   
@@ -113,13 +102,13 @@ class CleanUpMemory:
   
   def add(self, *args):
     for x in args:
-      self.memory.add(jax_array_to_tuple(x))
+      self.memory.add(array_to_tuple(x))
   
   def check_memory(self, x):
     """
     Check if x is already in clean up memory.
     """
-    if jax_array_to_tuple(x) in self.memory:
+    if array_to_tuple(x) in self.memory:
       return True
     else:
       return False
