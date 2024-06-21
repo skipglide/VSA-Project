@@ -51,5 +51,5 @@ class Scanner:
       self.symbolic_memory[i] = new_symbol
       self.update_pattern_count(new_symbol)
 # Opps
-# We forgot 
-#
+# We forgot to incorporate a way to effiently pair symbols with the original pattern
+# Gonna have to rewrite
