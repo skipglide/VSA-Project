@@ -18,6 +18,9 @@ def bundle(*symbols):
 
     return bundle
 
+def sequence(a, b):
+  
+
 def permute_forward(x, p):
   return np.dot(p, x)
 
@@ -66,6 +69,9 @@ class SymbolLibrary:
   
   def add_key(self, key):
     self.memory[key] = generate_symbol(self.dimensionality)
+  
+  def retrieve_symbol(self, key):
+    return self.memory[key]
 
 class LookUpMemory:
   def __init__(self, d):
