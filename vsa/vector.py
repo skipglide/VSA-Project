@@ -19,7 +19,7 @@ def bundle(*symbols):
     return bundle
 
 def sequence(a, b):
-  
+  pass
 
 def permute_forward(x, p):
   return np.dot(p, x)
@@ -32,7 +32,7 @@ def generate_permutation(n):
     identity = np.eye(n)
     
     # Generate random permutation indices
-    perm = np.random.permutation(generate_key(), n)
+    perm = np.random.permutation(n)
     
     # Use the permutation to shuffle the rows of the identity matrix
     return identity[perm]
