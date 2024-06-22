@@ -19,7 +19,7 @@ def bundle(*symbols):
     return bundle
 
 def sequence(a, b):
-  
+  pass
 
 def permute_forward(x, p):
   return np.dot(p, x)
