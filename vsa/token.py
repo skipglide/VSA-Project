@@ -1,5 +1,6 @@
 from numpy import ones
-from vector import generate_symbol, bind, array_to_tuple, tuple_to_array
+from vector import generate_symbol, bind, array_to_tuple,\
+   tuple_to_array, permute_forward, generate_permutation
 
 def get_unicode_number(char):
   """
@@ -9,15 +10,34 @@ def get_unicode_number(char):
   return unicode_number
 
 class Scanner:
-  def __init__(self, symbol_library, cleanup_memory):
+  def __init__(self, symbol_library, cleanup_memory, lookup_memory, perm_cleanup):
     self.symbol_library = symbol_library
     self.pattern_cleanup = cleanup_memory
+    self.permutation_lookup = lookup_memory
+    self.permutation_cleanup = perm_cleanup
+    self.dimensionality = symbol_library.dimensionality
+    # TODO: add check that all these memories are the same dimensionality
 
     self.token_window = 10
     self.token_memory = []
     self.symbol_memory = [ones(symbol_library.dimensionality, dtype=float16) for _ in range(self.token_window)]
 
     self.pattern_count = dict()
+
+  def store_permutation(self, perm):
+    p = generate_symbol(self.dimensionality)
+    self.permutation_lookup.add_association(p, perm)
+    return p
+
+  def array_to_sequence(arr):
+    perm = generate_permutation(self.dimensionality)
+    s = arr[0] # The begining of the sequence
+    for symbol in arr[1:-1]: # Leave out the first element
+      s = bundle(permute_forward(s, perm), symbol)
+    p = store_permutation
+    self.perm_cleanup.add(p)
+    s += p
+    return s
 
   def update_pattern_count(self, symbol):
     key = array_to_tuple(symbol)
