@@ -40,6 +40,17 @@ def bind(*symbols):
 
     return symbol
 
+def unbind(x, *symbols):
+    #stack and sum the symbols to be unbound
+    symbols = np.stack(symbols, axis=0)
+    symbols = np.sum(symbols, axis=0)
+
+    #remove them from the input & remap phase
+    symbol = np.subtract(x, symbols)
+    symbol = remap_phase(symbol)
+
+    return symbol
+
 def sequence(lookup, *symbols):
   s = symbols[0]
   P = generate_permutation(lookup.dimensionality)
