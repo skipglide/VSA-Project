@@ -10,6 +10,8 @@ def get_unicode_number(char):
   return unicode_number
 
 class Scanner:
+  # First you instanciate Scanner
+  # Then you feed it individual characters with read_token
   def __init__(self, symbol_library, cleanup_memory, lookup_memory, perm_cleanup):
     self.symbol_library = symbol_library
     self.pattern_cleanup = cleanup_memory
@@ -18,8 +20,8 @@ class Scanner:
     self.dimensionality = symbol_library.dimensionality
     # TODO: add check that all these memories are the same dimensionality
 
-    self.token_window = 10
-    self.token_memory = []
+    self.token_window = 10 # length of token list
+    self.token_memory = [] # contains 
     self.symbol_memory = [ones(symbol_library.dimensionality, dtype=float16) for _ in range(self.token_window)]
 
     self.pattern_count = dict()
@@ -29,7 +31,7 @@ class Scanner:
     self.permutation_lookup.add_association(p, perm)
     return p
 
-  def array_to_sequence(arr):
+  def array_to_sequence(self, arr):
     perm = generate_permutation(self.dimensionality)
     s = arr[0] # The begining of the sequence
     for symbol in arr[1:-1]: # Leave out the first element
@@ -39,9 +41,8 @@ class Scanner:
     s += p
     return s
 
-  def update_pattern_count(self, symbol):
-    key = array_to_tuple(symbol)
-    self.pattern_count[key] = pattern_counts.get(key, 0) + 1
+  def update_pattern_count(self, string):
+    self.pattern_count[string] = pattern_counts.get(key, 0) + 1
 
   def update_token_memory(self, symbol):
     self.token_memory.insert(symbol)
@@ -60,13 +61,24 @@ class Scanner:
     symbol = self.symbol_library.retrieve_symbol(t)
     self.update_pattern_count(symbol)
 
+  def get_symbol_with_char(self, char):
+    return self.symbol_library.retrieve_symbol(get_unicode_number(char))
+
   def update_memory(self):
+    # You can assume that any unicode number has a corresponding symbol in 
     for i in range(self.token_window - 1):
-      strings = self.token_memory[0:i]
+      char_list = self.token_memory[0:i]
       # Okay, now it needs to take that list of char and encode them into symbols
-      # Okay, now that you have those symbols, now you need to turn them into a permutation sequence 
+      symbols = [self.get_symbol_with_char(char) for char in char_list]
+      # Okay, now that you have those symbols, now you need to turn them into a permutation sequence
+      sequence_symbol = array_to_sequence(symbols)
       # Cool, with that permutation sequence, we can now record its occurance in the update_pattern_count
+      string = ''.join(char_list)
+      self.update_pattern_count(string)
       # Uhhh, okay I think that's it?
-# Opps
-# We forgot to incorporate a way to effiently pair symbols with the original pattern
-# Gonna have to rewrite
+
+  def save_model(self):
+    pass
+
+  def load_model(self):
+    pass
