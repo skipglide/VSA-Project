@@ -1,6 +1,6 @@
-from vsa.vector import LookUpMemory, CleanUpMemory, permute_forward, permute_inverse, generate_permutation, generate_symbol, generate_key, similarity
+from vsa.vector import LookUpMemory, CleanUpMemory, permute_forward, permute_inverse, generate_permutation, generate_symbol, similarity, bundle, sort
 
-d = 100
+d = 1000
 
 entries = CleanUpMemory(d)
 permutations = LookUpMemory(d)
@@ -13,8 +13,8 @@ b = generate_symbol(d)
 entries.add(a, b)
 
 # Create a permutation matrix with a symbol to represent it
-P_a = generate_permutation(d)
-p_a = permutations.add(p)
+P_a = generate_permutation(d) # The matrix
+p_a = permutations.add_symbol(P_a) # The matrix's symbol
 
 # Generate the pointer using the permutation matrix & a symbol
 pointer_ab = permute_inverse(b, P_a)
@@ -25,7 +25,7 @@ l_a = bundle(a, p_a, pointer_ab)
 links.add(l_a)
 
 # Adding Random Noise
-for i in range(1, 99):
+for i in range(1, 1):
   entries.add(generate_symbol(d))
   permutations.add_association(generate_symbol(d), generate_permutation(d))
   pointers.add(generate_symbol(d))
@@ -33,12 +33,15 @@ for i in range(1, 99):
 
 # Recover B
 # With a, obtain link vector that contains information to point to other symbol
-link = links.clean(a)[0]
+link = links.clean_up(a)
+# Now get the permutation symbol
+reconstructed_permutation_symbols = permutations.return_simularity(link)
+reconstructed_permutation_symbol = sort(reconstructed_permutation_symbols)
 # Get the permutation matrix
-permutation_matrix = retrieve_value(link)
+permutation_matrix = permutations.retrieve_value(reconstructed_permutation_symbol)
 # Apply a permutation operation to retrieve the linked value B
 noisy_vector = permute_forward(link, permutation_matrix)
 # Clean up the noise from our permute operation
-resultant_vector = entries.clean(noisy_vector)[0]
+resultant_vector = entries.clean_up(noisy_vector)
 # Check the simularity of this resultant vector with our original symbol 'b'.
-print(simularity(b, resultant_vector))
+print(similarity(b, resultant_vector))
