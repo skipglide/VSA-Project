@@ -22,8 +22,23 @@ def bundle(*symbols):
 
     return bundle
 
-def bind():
-  pass
+def remap_phase(x):
+    x = np.mod(x, 2.0)
+    x = -2.0 * np.greater(x, 1.0) + x
+
+    return x
+
+def bind(*symbols):
+    #stack the vararg inputs into an array
+    symbols = np.stack(symbols)
+    #sum the angles
+    symbol = np.sum(symbols, axis=0)
+    #remap the angles to (-1, 1)
+    symbol = remap_phase(symbol)
+    #reshape the output to maintain 2D array
+    symbol = np.reshape(symbol, (1, -1))
+
+    return symbol
 
 def sequence(lookup, *symbols):
   s = symbols[0]
