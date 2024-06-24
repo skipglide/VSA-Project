@@ -22,7 +22,19 @@ def bundle(*symbols):
 
     return bundle
 
-def sequence(a, b):
+def bind():
+  pass
+
+def sequence(lookup, *symbols):
+  s = symbols[0]
+  P = generate_permutation(lookup.dimensionality)
+  for symbol in symbols[1:]:
+    s = permute_forward(s, P) + symbol
+  symbol = lookup.add_symbol(P)
+  s += symbol
+  return s
+
+def desequence(s, ):
   pass
 
 def permute_forward(x, P):
@@ -59,7 +71,7 @@ def similarity(a,b):
     a = np.multiply(a, pi)
     b = np.multiply(b, pi)
     #calculate the mean cosine similarity between the vectors
-    similarity = np.mean(np.cos(a - b), axis=-1)
+    similarity = np.mean(np.cos(a - b), axis=0) # Get rid of axis?
     return similarity
 
 class SymbolLibrary:
