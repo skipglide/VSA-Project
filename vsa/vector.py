@@ -61,6 +61,7 @@ def sequence(lookup, *symbols):
   return s
 
 def desequence(s, cleanup, lookup):
+  # TODO: finish this function
   symbols = list()
   similarity = lookup.return_similarity(s)
   while similarity > 0.1:
