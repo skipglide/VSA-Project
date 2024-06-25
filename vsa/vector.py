@@ -97,7 +97,7 @@ def similarity(a,b):
     a = np.multiply(a, pi)
     b = np.multiply(b, pi)
     #calculate the mean cosine similarity between the vectors
-    similarity = np.mean(np.cos(a - b), axis=0) # Get rid of axis?
+    similarity = np.mean(np.cos(a - b), axis=1) # Get rid of axis?
     return similarity
 
 class SymbolLibrary:
@@ -137,7 +137,7 @@ class LookUpMemory:
 
     self.memory[array_to_bytes(x)] = a
   
-  def return_simularity(self, x):
+  def return_similarity(self, x):
     """
     Takes the symbol 'x' and returns a list of
     """
@@ -174,11 +174,11 @@ class CleanUpMemory:
       return False
   
   def clean_up(self, x):
-    unsorted_list = self.return_simularity(x)
+    unsorted_list = self.return_similarity(x)
     sorted_list = sorted(unsorted_list, key=lambda x: x[0])
     return sorted_list[0][-1]
 
-  def return_simularity(self, x):
+  def return_similarity(self, x):
     # This is a naive implimentation until I incorporate annoy
     result = []
     for symbol in self.memory:
