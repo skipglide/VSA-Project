@@ -62,7 +62,7 @@ def sequence(lookup, *symbols):
 
 def desequence(s, cleanup, lookup):
   symbols = list()
-  similarity = lookup.return_similarity()
+  similarity = lookup.return_similarity(s)
   while similarity > 0.1:
     recovery = cleanup.cleanup(s)
     symbols.append(recovery)
