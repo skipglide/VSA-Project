@@ -60,8 +60,12 @@ def sequence(lookup, *symbols):
   s += symbol
   return s
 
-def desequence(s, ):
-  pass
+def desequence(s, cleanup, lookup):
+  symbols = list()
+  similarity = lookup.return_similarity()
+  while similarity > 0.1:
+    recovery = cleanup.cleanup(s)
+    symbols.append(recovery)
 
 def permute_forward(x, P):
   return np.dot(x, P)
