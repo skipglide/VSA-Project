@@ -3,6 +3,12 @@ import numpy as np
 def link(a, b):
   pass
 
+def arr2tup(arr):
+  return tuple(arr)
+
+def tup2arr(tup):
+  return np.array(tup).reshape(len(tup))
+
 def sort(unsorted_list):
   sorted_list = sorted(unsorted_list, key=lambda x: x[0])
   return sorted_list[0][-1]
