@@ -92,7 +92,7 @@ def generate_permutation(n):
 
 def generate_symbol(dimensionality: int):
   symbol = np.random.uniform(low=-1.0, high=1.0, size=(1, dimensionality))
-  return symbol
+  return symbol.reshape(dimensionality)
 
 def array_to_bytes(arr):
     return arr.tobytes()
@@ -108,7 +108,7 @@ def similarity(a,b):
     a = np.multiply(a, pi)
     b = np.multiply(b, pi)
     #calculate the mean cosine similarity between the vectors
-    similarity = np.mean(np.cos(a - b), axis=1) # Get rid of axis?
+    similarity = np.mean(np.cos(a - b), axis=0) # Get rid of axis?
     return similarity
 
 class SymbolLibrary:

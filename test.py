@@ -1,7 +1,7 @@
 import numpy as np
 from vsa.vector import CleanUpMemory, LookUpMemory, SymbolLibrary
 import vsa.vector as v
-
+from vsa.utils import mr_timer
 d = 1000
 
 cleanup = CleanUpMemory(d)
@@ -15,8 +15,7 @@ c = v.generate_symbol(d)
 a_bites = v.array_to_bytes(a)
 a_array = v.bytes_to_array(a_bites)
 print("Testing *_to_* function")
-print(type(a), type(a_array))
-print(v.similarity(a, a_array)) # Should equal exactly 1.0
+print(mr_timer(v.similarity(a, a_array)).output) # Should equal exactly 1.0
 
 # Add symbol to clean up memory and recover it
 cleanup.add(a)
