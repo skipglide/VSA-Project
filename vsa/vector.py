@@ -1,17 +1,75 @@
 import numpy as np
 
-def link(a, b):
-  pass
+# Utilities
+#
 
 def arr2tup(arr):
+  """
+  Converts a numpy array to a tuple.
+
+  Args:
+        arr (ndarray): 1D-Array for VSA operations.
+
+    Returns:
+        tup: Array as Tuple, is hashable.
+  """
   return tuple(arr)
 
+
 def tup2arr(tup):
+  """
+  Converts a tuple to a numpy array.
+
+  Args:
+        tup (tuple): Tuple representation of VSA symbol.
+
+    Returns:
+        arr: 1D-Array for VSA operations.
+  """
   return np.array(tup).reshape(len(tup))
+
+
+def array_to_bytes(arr):
+  """
+  Converts an array to a byte object.
+
+  Args:
+        arr (ndarray): 1D-Array for VSA operations.
+
+    Returns:
+        bites: Byte representaion of array.
+  """
+  return arr.tobytes()
+
+
+def bytes_to_array(bites):
+    array = np.frombuffer(bites, dtype=np.float64)
+    return array
+
 
 def sort(unsorted_list):
   sorted_list = sorted(unsorted_list, key=lambda x: x[0])
   return sorted_list[0][-1]
+
+# Basic Operations
+#
+
+def generate_symbol(dimensionality: int):
+  symbol = np.random.uniform(low=-1.0, high=1.0, size=(1, dimensionality))
+  return symbol.reshape(dimensionality)
+
+def similarity(a,b):
+    assert a.shape[-1] == b.shape[-1], "VSA Dimension must match: " + str(a.shape) + " " + str(b.shape)
+    #multiply values by pi to move from (-1, 1) to (-π, π)
+    pi = np.pi
+    a = np.multiply(a, pi)
+    b = np.multiply(b, pi)
+    #calculate the mean cosine similarity between the vectors
+    similarity = np.mean(np.cos(a - b), axis=0) # Get rid of axis?
+    return similarity
+
+# Bundling Operation
+#
 
 def bundle(*symbols):
     symbols = np.stack(symbols, axis=0)
@@ -27,6 +85,9 @@ def bundle(*symbols):
     bundle = np.reshape(bundle, (1, -1))
 
     return bundle
+
+# Binding Operations
+#
 
 def remap_phase(x):
     x = np.mod(x, 2.0)
@@ -57,28 +118,9 @@ def unbind(x, *symbols):
 
     return symbol
 
-def sequence(lookup, *symbols):
-  s = symbols[0]
-  P = generate_permutation(lookup.dimensionality)
-  for symbol in symbols[1:]:
-    s = permute_forward(s, P) + symbol
-  symbol = lookup.add_symbol(P)
-  s += symbol
-  return s
 
-def desequence(s, cleanup, lookup):
-  # TODO: finish this function
-  symbols = list()
-  similarity = lookup.return_similarity(s)
-  while similarity > 0.1:
-    recovery = cleanup.cleanup(s)
-    symbols.append(recovery)
-
-def permute_forward(x, P):
-  return np.dot(x, P)
-
-def permute_inverse(x, P):
-  return np.dot(x, P.T)
+# Sequence Operations
+# 
 
 def generate_permutation(n):
     # Create an identity matrix
@@ -90,26 +132,39 @@ def generate_permutation(n):
     # Use the permutation to shuffle the rows of the identity matrix
     return identity[perm]
 
-def generate_symbol(dimensionality: int):
-  symbol = np.random.uniform(low=-1.0, high=1.0, size=(1, dimensionality))
-  return symbol.reshape(dimensionality)
 
-def array_to_bytes(arr):
-    return arr.tobytes()
+def permute_forward(x, P):
+  return np.dot(x, P)
 
-def bytes_to_array(bites):
-    array = np.frombuffer(bites, dtype=np.float64)
-    return array
 
-def similarity(a,b):
-    assert a.shape[-1] == b.shape[-1], "VSA Dimension must match: " + str(a.shape) + " " + str(b.shape)
-    #multiply values by pi to move from (-1, 1) to (-π, π)
-    pi = np.pi
-    a = np.multiply(a, pi)
-    b = np.multiply(b, pi)
-    #calculate the mean cosine similarity between the vectors
-    similarity = np.mean(np.cos(a - b), axis=0) # Get rid of axis?
-    return similarity
+def permute_inverse(x, P):
+  return np.dot(x, P.T)
+
+
+def link(a, b):
+  pass
+
+
+def sequence(lookup, *symbols):
+  s = symbols[0]
+  P = generate_permutation(lookup.dimensionality)
+  for symbol in symbols[1:]:
+    s = permute_forward(s, P) + symbol
+  symbol = lookup.add_symbol(P)
+  s += symbol
+  return s
+
+
+def desequence(s, cleanup, lookup):
+  # TODO: finish this function
+  symbols = list()
+  similarity = lookup.return_similarity(s)
+  while similarity > 0.1:
+    recovery = cleanup.cleanup(s)
+    symbols.append(recovery)
+
+# Memory Classes
+#
 
 class SymbolLibrary:
   def __init__(self, d):
@@ -196,6 +251,9 @@ class CleanUpMemory:
       a = bytes_to_array(symbol)
       result.append((similarity(x, a), a))
     return result
+
+# Custom Data Types
+#
 
 class FHRR:
   """
