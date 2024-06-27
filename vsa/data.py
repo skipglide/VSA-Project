@@ -1,7 +1,10 @@
 from dataclasses import dataclass
+from numpy import ndarray
 
 @dataclass
 class FHRR:
-    name: str
-    dept: str
-    salary: int
+    symbol: ndarray
+
+@dataclass
+class BSC:
+    symbol: ndarray

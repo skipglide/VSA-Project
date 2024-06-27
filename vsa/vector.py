@@ -47,6 +47,9 @@ def bytes_to_array(bites):
     return array
 
 
+def threshold(unsorted_list: list, threshold: float):
+  filtered_list = [_[0] for _ in unsorted_list if _[0] >= threshold]
+
 def sort(unsorted_list):
   sorted_list = sorted(unsorted_list, key=lambda x: x[0])
   return sorted_list[0][-1]
@@ -141,10 +144,6 @@ def permute_inverse(x, P):
   return np.dot(x, P.T)
 
 
-def link(a, b):
-  pass
-
-
 def sequence(lookup, *symbols):
   s = symbols[0]
   P = generate_permutation(lookup.dimensionality)
@@ -162,6 +161,27 @@ def desequence(s, cleanup, lookup):
   while similarity > 0.1:
     recovery = cleanup.cleanup(s)
     symbols.append(recovery)
+
+# Linked Lists
+#
+
+def link(a: ndarray, b: ndarray, entries: CleanUpMemory, permutations: LookUpMemory, pointers: CleanUpMemory):
+  # Add a & b to entries if not already present
+  entries.add(a, b)
+  # Create a permutation matrix with a symbol to represent it
+  P = generate_permutation
+  p = permutations.add_symbol(P)
+  # Generate the pointer using the permutation matrix & a symbol
+  pointer = permute_inverse(b, P)
+  pointers.add(pointer)
+  # Create the link vector that contains a symbol, a permutation matric symbol, and the pointer.
+  l = bundle(a, p, pointer)
+  return l
+
+
+def find_link(a: ndarray, links: CleanUpMemory, entries: CleanUpMemory, permutations: LookUpMemory, pointers: CleanUpMemory):
+  link = links.clean_up(a)
+
 
 # Memory Classes
 #
@@ -244,7 +264,22 @@ class CleanUpMemory:
     sorted_list = sorted(unsorted_list, key=lambda x: x[0])
     return sorted_list[0][-1]
 
-  def return_similarity(self, x):
+  def return_threshold(self, x: ndarray, threshold: float):
+    """
+    Returns a list of symbols who's simularities exceed a certain threshold.
+    Args:
+        x (ndarray): A symbol.
+        t (float): A simularity threshold, should be between 0 and 1.
+
+    Returns:
+        list: A list of the results in no particular order
+    """
+    simularities = return_simularities(x)
+    thresholds = threshold(x, threshold)
+    # TODO: Finish this
+
+
+  def return_simularities(self, x):
     # This is a naive implimentation until I incorporate annoy
     result = []
     for symbol in self.memory:
