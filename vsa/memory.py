@@ -30,7 +30,7 @@ class LookUpMemory(Memory):
   def __init__(self):
     self.memory = dict()
 
-  def add_symbol(self, a):
+  def add_symbol_for(self, a):
     '''
     Takes thing 'a' and generates a symbol to return
     '''

@@ -194,7 +194,7 @@ def sequence(lookup, *symbols):
   P = generate_permutation(lookup.dimensionality)
   for symbol in symbols[1:]:
     s = permute_forward(s, P) + symbol
-  symbol = lookup.add_symbol(P)
+  symbol = lookup.add_symbol_for(P)
   s += symbol
   return s
 
@@ -215,7 +215,7 @@ def link(a: ndarray, b: ndarray, entries: CleanUpMemory, permutations: LookUpMem
   entries.add(a, b)
   # Create a permutation matrix with a symbol to represent it
   P = generate_permutation
-  p = permutations.add_symbol(P)
+  p = permutations.add_symbol_for(P)
   # Generate the pointer using the permutation matrix & a symbol
   pointer = permute_inverse(b, P)
   pointers.add(pointer)
