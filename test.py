@@ -7,6 +7,7 @@ d = 1000
 cleanup = CleanUpMemory(d, 0.1)
 lookup = LookUpMemory(d, 0.1)
 symbol_library = SymbolLibrary(d, 0.1)
+sequences = CleanUpMemory(d, 0.1)
 
 # Test adding converting array to bytes & back
 a = v.generate_symbol(d)
@@ -52,5 +53,8 @@ for i in range(1,3):
 print(f"there are {len(v.threshold(cleanup.return_similarities()))} vectors above threshold {cleanup.threshold}")
 
 s = v.sequence(lookup, a, b, c) # Create the sequence
+sequences.add(s) # Add it to sequence clean up
 for i in range(1, 99): # Add some noise
-    lookup.add_symbol(v.generate_permutation(d))
+    lookup.add_symbol_for(v.generate_permutation(d))
+# Now we're retreive the permutation vector for s in lookup
+permutation_vector = lookup.return_simularities(s)
