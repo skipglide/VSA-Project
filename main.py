@@ -1,4 +1,5 @@
-from vsa.vector import LookUpMemory, CleanUpMemory, permute_forward, permute_inverse, generate_permutation, generate_symbol, similarity, bundle, sort
+from vsa.memory import LookUpMemort, ClearnUpMemory
+from vsa.vector import permute_forward, permute_inverse, generate_permutation, generate_symbol, similarity, bundle, sort
 
 d = 1000
 

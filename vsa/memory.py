@@ -1,28 +1,34 @@
 from vector import generate_symbol,\
-    similarity, array_to_bytes, \
-        bytes_to_array
+  similarity, array_to_bytes, \
+  bytes_to_array, sort, threshold, \
+  best_match
 
-class SymbolLibrary:
-  def __init__(self, d):
+# Memory Classes
+#
+
+class SymbolLibrary(Memory):
+  """
+  A library that takes a valid key and returns a symbol
+  """
+  def __init__(self):
     self.library = dict()
-    self.dimensionality = d
-  
+
   def already_there(self, x):
     if x in self.memory.keys():
       return True
     else:
       return False
-  
+
   def add_key(self, key):
     self.memory[key] = generate_symbol(self.dimensionality)
-  
+
   def retrieve_symbol(self, key):
     return self.memory[key]
 
-class LookUpMemory:
-  def __init__(self, d):
+
+class LookUpMemory(Memory):
+  def __init__(self):
     self.memory = dict()
-    self.dimensionality = d
 
   def add_symbol(self, a):
     '''
@@ -38,8 +44,8 @@ class LookUpMemory:
     """
 
     self.memory[array_to_bytes(x)] = a
-  
-  def return_similarity(self, x):
+
+  def return_similarities(self, x):
     """
     Takes the symbol 'x' and returns a list of
     """
@@ -49,7 +55,7 @@ class LookUpMemory:
       a = bytes_to_array(association)
       result.append((similarity(x, a), a))
     return result
-  
+
   def retrieve_value(self, x):
       try:
           return self.memory[array_to_bytes(x)]
@@ -57,15 +63,15 @@ class LookUpMemory:
           print("No value")
           return None
 
-class CleanUpMemory:
-  def __init__(self, d):
+
+class CleanUpMemory(Memory):
+  def __init__(self):
     self.memory = set()
-    self.dimensionality = d
-  
+
   def add(self, *args):
     for x in args:
       self.memory.add(array_to_bytes(x))
-  
+
   def check_memory(self, x):
     """
     Check if x is already in clean up memory.
@@ -74,23 +80,55 @@ class CleanUpMemory:
       return True
     else:
       return False
-  
-  def clean_up(self, x):
-    unsorted_list = self.return_similarity(x)
-    sorted_list = sorted(unsorted_list, key=lambda x: x[0])
-    return sorted_list[0][-1]
 
-  def return_similarity(self, x):
-    # This is a naive implimentation until I incorporate annoy
+  def clean_up(self, x):
+    """
+    Returns the symbol with the highest similarity score to the symbol 'x'.
+
+    Args:
+      x (ndarray): A symbol.
+
+    Returns:
+      symbol: A symbol with the highest similarity score.    
+    """
+    unsorted_list = self.return_similarities(x)
+    return best_match(unsorted_list)
+
+  def return_threshold(self, x: ndarray, threshold: float):
+    """
+    Returns a list of symbols who's simularities exceed a certain threshold.
+
+    Args:
+        x (ndarray): A symbol.
+        t (float): A simularity threshold, should be between 0 and 1.
+
+    Returns:
+        list: A list of the results in no particular order
+    """
+    simularities = return_simularities(x)
+    thresholds = threshold(x, threshold)
+
+  def return_similarities(self, x):
+    """
+    Generates an unsorted list of pairs of simularity-scores/symbols
+    """
     result = []
     for symbol in self.memory:
       a = bytes_to_array(symbol)
       result.append((similarity(x, a), a))
     return result
 
-class FHRR:
-  """
-  Fourier Holographic Reduced Representation
-  """
-  def __init__(self, d):
-    self.symbol = generate_symbol()
+
+class Memory:
+  def __init__(self, d: int, t: float):
+    """
+    A class for performing recall operations.
+
+    Args:
+      d (int): The dimensionality of the symbols.
+      t (float): The threshold for performing cleanup operations.
+    """
+    self.dimensionality = d
+    self.threshold = t
+  
+  

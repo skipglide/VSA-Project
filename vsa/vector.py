@@ -1,5 +1,6 @@
 import numpy as np
 
+from utils import TimeCalls
 # Utilities
 #
 
@@ -28,7 +29,7 @@ def tup2arr(tup):
   """
   return np.array(tup).reshape(len(tup))
 
-
+@TimeCalls
 def array_to_bytes(arr):
   """
   Converts an array to a byte object.
@@ -41,26 +42,70 @@ def array_to_bytes(arr):
   """
   return arr.tobytes()
 
-
+@TimeCalls
 def bytes_to_array(bites):
-    array = np.frombuffer(bites, dtype=np.float64)
-    return array
+  """
+  Converts a byte object to a 1D ndarray.
 
+  Args:
+    bites: Byte representaion of array.
 
+  Returns:
+    arr (ndarray): 1D-Array for VSA operations.
+  """
+  array = np.frombuffer(bites, dtype=np.float64)
+  return array
+
+@TimeCalls
 def threshold(unsorted_list: list, threshold: float):
-  filtered_list = [_[0] for _ in unsorted_list if _[0] >= threshold]
+  """
+  Filters a list based off of a threshold value.
 
-def sort(unsorted_list):
+  Args:
+    unsorted_list: a list of paired values, it filters based off a threshold value for the first of the pair
+
+  Returns:
+    filtered_list (list): a list of paired values, all of them exceed the threshold criteria
+  """
+  filtered_list = [_ for _ in unsorted_list if _[0] >= threshold]
+  return filtered_list
+
+def best_match(unsorted_list: list):
+  """
+  Returns the best match from an unsorted list of similarity/symbol pairs.
+
+  Args:
+    unsorted_list: a list of paired values, it filters based off a threshold value for the first entry of the pair.
+
+  Returns:
+    symbol (ndarray): The symbol with the highest simularity score.
+  """
+  sorted = sort(unsorted_list)
+  symbol = sorted[0][-1]
+  return symbol
+
+@TimeCalls
+def sort(unsorted_list: list):
+  """
+  Sorts a list of pairs of values based off of a simularity score in the first entry of each pair.
+
+  Args:
+    unsorted_list: a list of paired values, it filters based off a threshold value for the first entry of the pair.
+
+  Returns:
+    sorted_list (list): a list of paired values, all of them exceed the threshold criteria
+  """
   sorted_list = sorted(unsorted_list, key=lambda x: x[0])
-  return sorted_list[0][-1]
+  return sorted_list
 
 # Basic Operations
 #
-
+@TimeCalls
 def generate_symbol(dimensionality: int):
   symbol = np.random.uniform(low=-1.0, high=1.0, size=(1, dimensionality))
   return symbol.reshape(dimensionality)
 
+@TimeCalls
 def similarity(a,b):
     assert a.shape[-1] == b.shape[-1], "VSA Dimension must match: " + str(a.shape) + " " + str(b.shape)
     #multiply values by pi to move from (-1, 1) to (-π, π)
@@ -143,7 +188,7 @@ def permute_forward(x, P):
 def permute_inverse(x, P):
   return np.dot(x, P.T)
 
-
+@TimeCalls
 def sequence(lookup, *symbols):
   s = symbols[0]
   P = generate_permutation(lookup.dimensionality)
@@ -153,7 +198,7 @@ def sequence(lookup, *symbols):
   s += symbol
   return s
 
-
+@TimeCalls
 def desequence(s, cleanup, lookup):
   # TODO: finish this function
   symbols = list()
@@ -164,7 +209,7 @@ def desequence(s, cleanup, lookup):
 
 # Linked Lists
 #
-
+@TimeCalls
 def link(a: ndarray, b: ndarray, entries: CleanUpMemory, permutations: LookUpMemory, pointers: CleanUpMemory):
   # Add a & b to entries if not already present
   entries.add(a, b)
@@ -181,118 +226,3 @@ def link(a: ndarray, b: ndarray, entries: CleanUpMemory, permutations: LookUpMem
 
 def find_link(a: ndarray, links: CleanUpMemory, entries: CleanUpMemory, permutations: LookUpMemory, pointers: CleanUpMemory):
   link = links.clean_up(a)
-
-
-# Memory Classes
-#
-
-class SymbolLibrary:
-  def __init__(self, d):
-    self.library = dict()
-    self.dimensionality = d
-  
-  def already_there(self, x):
-    if x in self.memory.keys():
-      return True
-    else:
-      return False
-  
-  def add_key(self, key):
-    self.memory[key] = generate_symbol(self.dimensionality)
-  
-  def retrieve_symbol(self, key):
-    return self.memory[key]
-
-class LookUpMemory:
-  def __init__(self, d):
-    self.memory = dict()
-    self.dimensionality = d
-
-  def add_symbol(self, a):
-    '''
-    Takes thing 'a' and generates a symbol to return
-    '''
-    x = generate_symbol(self.dimensionality)
-    self.memory[array_to_bytes(x)] = a
-    return x
-
-  def add_association(self, x, a):
-    """
-    Takes a symbol 'x' and uses it as key for retreiving 'a'
-    """
-
-    self.memory[array_to_bytes(x)] = a
-  
-  def return_similarity(self, x):
-    """
-    Takes the symbol 'x' and returns a list of
-    """
-    # This is a naive implimentation until I incorporate annoy
-    result = []
-    for association in self.memory:
-      a = bytes_to_array(association)
-      result.append((similarity(x, a), a))
-    return result
-  
-  def retrieve_value(self, x):
-      try:
-          return self.memory[array_to_bytes(x)]
-      except KeyError:
-          print("No value")
-          return None
-
-class CleanUpMemory:
-  def __init__(self, d):
-    self.memory = set()
-    self.dimensionality = d
-  
-  def add(self, *args):
-    for x in args:
-      self.memory.add(array_to_bytes(x))
-  
-  def check_memory(self, x):
-    """
-    Check if x is already in clean up memory.
-    """
-    if array_to_bytes(x) in self.memory:
-      return True
-    else:
-      return False
-  
-  def clean_up(self, x):
-    unsorted_list = self.return_similarity(x)
-    sorted_list = sorted(unsorted_list, key=lambda x: x[0])
-    return sorted_list[0][-1]
-
-  def return_threshold(self, x: ndarray, threshold: float):
-    """
-    Returns a list of symbols who's simularities exceed a certain threshold.
-    Args:
-        x (ndarray): A symbol.
-        t (float): A simularity threshold, should be between 0 and 1.
-
-    Returns:
-        list: A list of the results in no particular order
-    """
-    simularities = return_simularities(x)
-    thresholds = threshold(x, threshold)
-    # TODO: Finish this
-
-
-  def return_simularities(self, x):
-    # This is a naive implimentation until I incorporate annoy
-    result = []
-    for symbol in self.memory:
-      a = bytes_to_array(symbol)
-      result.append((similarity(x, a), a))
-    return result
-
-# Custom Data Types
-#
-
-class FHRR:
-  """
-  Fourier Holographic Reduced Representation
-  """
-  def __init__(self):
-    self.symbol = generate_symbol()
