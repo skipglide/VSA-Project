@@ -1,10 +1,80 @@
-from vector import generate_symbol,\
+from numpy import ndarray
+
+from .vector import generate_symbol,\
   similarity, array_to_bytes, \
   bytes_to_array, sort, threshold, \
   best_match
 
 # Memory Classes
 #
+
+class Memory:
+  def __init__(self, d: int, t: float):
+    """
+    A class for performing recall operations.
+
+    Args:
+      d (int): The dimensionality of the symbols.
+      t (float): The threshold for performing cleanup operations.
+    """
+    self.dimensionality = d
+    self.threshold = t
+  
+
+class CleanUpMemory(Memory):
+  def __init__(self):
+    self.memory = set()
+
+  def add(self, *args):
+    for x in args:
+      self.memory.add(array_to_bytes(x))
+
+  def check_memory(self, x):
+    """
+    Check if x is already in clean up memory.
+    """
+    if array_to_bytes(x) in self.memory:
+      return True
+    else:
+      return False
+
+  def clean_up(self, x):
+    """
+    Returns the symbol with the highest similarity score to the symbol 'x'.
+
+    Args:
+      x (ndarray): A symbol.
+
+    Returns:
+      symbol: A symbol with the highest similarity score.    
+    """
+    unsorted_list = self.return_similarities(x)
+    return best_match(unsorted_list)
+
+  def return_threshold(self, x: ndarray, threshold: float):
+    """
+    Returns a list of symbols who's simularities exceed a certain threshold.
+
+    Args:
+        x (ndarray): A symbol.
+        t (float): A simularity threshold, should be between 0 and 1.
+
+    Returns:
+        list: A list of the results in no particular order
+    """
+    simularities = return_simularities(x)
+    thresholds = threshold(x, threshold)
+
+  def return_similarities(self, x):
+    """
+    Generates an unsorted list of pairs of simularity-scores/symbols
+    """
+    result = []
+    for symbol in self.memory:
+      a = bytes_to_array(symbol)
+      result.append((similarity(x, a), a))
+    return result
+
 
 class SymbolLibrary(Memory):
   """
@@ -62,73 +132,3 @@ class LookUpMemory(Memory):
       except KeyError:
           print("No value")
           return None
-
-
-class CleanUpMemory(Memory):
-  def __init__(self):
-    self.memory = set()
-
-  def add(self, *args):
-    for x in args:
-      self.memory.add(array_to_bytes(x))
-
-  def check_memory(self, x):
-    """
-    Check if x is already in clean up memory.
-    """
-    if array_to_bytes(x) in self.memory:
-      return True
-    else:
-      return False
-
-  def clean_up(self, x):
-    """
-    Returns the symbol with the highest similarity score to the symbol 'x'.
-
-    Args:
-      x (ndarray): A symbol.
-
-    Returns:
-      symbol: A symbol with the highest similarity score.    
-    """
-    unsorted_list = self.return_similarities(x)
-    return best_match(unsorted_list)
-
-  def return_threshold(self, x: ndarray, threshold: float):
-    """
-    Returns a list of symbols who's simularities exceed a certain threshold.
-
-    Args:
-        x (ndarray): A symbol.
-        t (float): A simularity threshold, should be between 0 and 1.
-
-    Returns:
-        list: A list of the results in no particular order
-    """
-    simularities = return_simularities(x)
-    thresholds = threshold(x, threshold)
-
-  def return_similarities(self, x):
-    """
-    Generates an unsorted list of pairs of simularity-scores/symbols
-    """
-    result = []
-    for symbol in self.memory:
-      a = bytes_to_array(symbol)
-      result.append((similarity(x, a), a))
-    return result
-
-
-class Memory:
-  def __init__(self, d: int, t: float):
-    """
-    A class for performing recall operations.
-
-    Args:
-      d (int): The dimensionality of the symbols.
-      t (float): The threshold for performing cleanup operations.
-    """
-    self.dimensionality = d
-    self.threshold = t
-  
-  
