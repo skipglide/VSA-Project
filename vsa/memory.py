@@ -22,7 +22,8 @@ class Memory:
   
 
 class CleanUpMemory(Memory):
-  def __init__(self):
+  def __init__(self, d: int, t: int):
+    super().__init__(d, t)
     self.memory = set()
 
   def add(self, *args):
@@ -80,7 +81,8 @@ class SymbolLibrary(Memory):
   """
   A library that takes a valid key and returns a symbol
   """
-  def __init__(self):
+  def __init__(self, d: int, t: int):
+    super().__init__(d, t)
     self.library = dict()
 
   def already_there(self, x):
@@ -97,7 +99,8 @@ class SymbolLibrary(Memory):
 
 
 class LookUpMemory(Memory):
-  def __init__(self):
+  def __init__(self, d: int, t: int):
+    super().__init__(d, t)
     self.memory = dict()
 
   def add_symbol_for(self, a):

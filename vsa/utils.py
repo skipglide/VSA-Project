@@ -46,13 +46,13 @@ class TimeCalls:
     def __init__(self, func: Callable[..., Any]):
         self.func = func
         self.runs = []
-
+    
     def __call__(self, *args, **kwargs):
         start_time = time.perf_counter()
         result = self.func(*args, **kwargs)
-        self.runs.append(start - time.perf_counter())
+        self.runs.append(start_time - time.perf_counter())
         return result
-    
+
     def stats(self):
         return {
         "mean": statistics.mean(times),

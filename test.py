@@ -24,7 +24,7 @@ print("Generating Noise")
 for i in range(1, 9): # Add some noise
     cleanup.add(v.generate_symbol(d))
 unsorted_list = cleanup.return_similarities(a)
-top_result = v.sort(unsorted_list)
+top_result = v.best_match(unsorted_list)
 
 print("Testing cleanup")
 print(a.shape, top_result.shape)
@@ -36,21 +36,24 @@ noisy_symbol = v.bundle(a, v.generate_symbol(d))
 print(v.similarity(a, noisy_symbol)) # Should be less than one, but greater than 0.1
 unsorted_list = cleanup.return_similarities(noisy_symbol)
 top_result = v.best_match(unsorted_list)
-print(f"a simu. score to clean up retrieval: {v.similarity(a, top_result)}") # Should equal exactly 1.0
+print(f"a simu. score to noisy-clean up retrieval: {v.similarity(a, top_result)}") # Should equal exactly 1.0
 
 # Test Bind operation
 print("Testing noisy cleanup")
-ab = v.bind(a, b)
-print(f"ab simularity to a: {v.similarity(a, ab)}")
-print(f"ab simularity to b: {v.similarity(b, ab)}")
+ac = v.bind(a, c)
+bc = v.bind(b, c)
+print(f"a simularity to b: {v.similarity(a, b)}")
+print(f"ac simularity to bc: {v.similarity(ac, bc)}")
+a_ = v.unbind(ac, c)
+print(f"a_ simularity to a: {v.similarity(a, a_)}")
 
 # Test threshold
 # Add binded vectors that will score ~0.5 simularity
 for i in range(1,3):
     _ = v.generate_symbol(d)
-    _ = v.bind(a, _)
+    _ = v.bundle(a, _)
     cleanup.add(_)
-print(f"there are {len(v.threshold(cleanup.return_similarities()))} vectors above threshold {cleanup.threshold}")
+print(f"there are {len(v.threshold(cleanup.return_similarities(a), 0.1))} vectors above threshold {cleanup.threshold}")
 
 s = v.sequence(lookup, a, b, c) # Create the sequence
 sequences.add(s) # Add it to sequence clean up

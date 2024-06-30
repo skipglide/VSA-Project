@@ -96,7 +96,7 @@ def sort(unsorted_list: list):
   Returns:
     sorted_list (list): a list of paired values, all of them exceed the threshold criteria
   """
-  sorted_list = sorted(unsorted_list, key=lambda x: x[0])
+  sorted_list = sorted(unsorted_list, key=lambda x: x[0], reverse=True)
   return sorted_list
 
 # Basic Operations
@@ -107,14 +107,14 @@ def generate_symbol(dimensionality: int):
   return symbol.reshape(dimensionality)
 
 @TimeCalls
-def similarity(a,b):
+def similarity(a: ndarray, b: ndarray) -> float:
     assert a.shape[-1] == b.shape[-1], "VSA Dimension must match: " + str(a.shape) + " " + str(b.shape)
     #multiply values by pi to move from (-1, 1) to (-π, π)
     pi = np.pi
     a = np.multiply(a, pi)
     b = np.multiply(b, pi)
     #calculate the mean cosine similarity between the vectors
-    similarity = np.mean(np.cos(a - b), axis=0) # Get rid of axis?
+    similarity = np.mean(np.cos(a - b))
     return similarity
 
 # Bundling Operation
