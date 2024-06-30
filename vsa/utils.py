@@ -50,12 +50,13 @@ class TimeCalls:
     def __call__(self, *args, **kwargs):
         start_time = time.perf_counter()
         result = self.func(*args, **kwargs)
-        self.runs.append(start_time - time.perf_counter())
+        end_time = time.perf_counter()
+        self.runs.append(end_time - start_time)
         return result
-
+    
     def stats(self):
         return {
-        "mean": statistics.mean(times),
-        "median": statistics.median(times),
-        "stdev": statistics.stdev(times) if len(times) > 1 else 0,
+        "mean": statistics.mean(self.runs[1:]),
+        "median": statistics.median(self.runs[1:]),
+        "stdev": statistics.stdev(self.runs[1:]) if len(self.runs[1:]) > 1 else 0,
         }
