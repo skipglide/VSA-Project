@@ -1,12 +1,14 @@
-from vsa.memory import LookUpMemort, ClearnUpMemory
-from vsa.vector import permute_forward, permute_inverse, generate_permutation, generate_symbol, similarity, bundle, sort
+from vsa.memory import LookUpMemory, CleanUpMemory
+from vsa.vector import generate_symbol, similarity, bundle, sort, best_match
+from vsa.connect import permute_forward, permute_inverse, generate_permutation
 
 d = 1000
+t = 0.1
 
-entries = CleanUpMemory(d)
-permutations = LookUpMemory(d)
-pointers = CleanUpMemory(d)
-links = CleanUpMemory(d)
+entries = CleanUpMemory(d, t)
+permutations = LookUpMemory(d, t)
+pointers = CleanUpMemory(d, t)
+links = CleanUpMemory(d, t)
 
 # Create two symbols we want to associate
 a = generate_symbol(d)
@@ -15,7 +17,7 @@ entries.add(a, b)
 
 # Create a permutation matrix with a symbol to represent it
 P_a = generate_permutation(d) # The matrix
-p_a = permutations.add_symbol(P_a) # The matrix's symbol
+p_a = permutations.add_symbol_for(P_a) # The matrix's symbol
 
 # Generate the pointer using the permutation matrix & a symbol
 pointer_ab = permute_inverse(b, P_a)
@@ -36,8 +38,8 @@ for i in range(1, 1):
 # With a, obtain link vector that contains information to point to other symbol
 link = links.clean_up(a)
 # Now get the permutation symbol
-reconstructed_permutation_symbols = permutations.return_simularity(link)
-reconstructed_permutation_symbol = sort(reconstructed_permutation_symbols)
+reconstructed_permutation_symbols = permutations.return_similarities(link)
+reconstructed_permutation_symbol = best_match(reconstructed_permutation_symbols)
 # Get the permutation matrix
 permutation_matrix = permutations.retrieve_value(reconstructed_permutation_symbol)
 # Apply a permutation operation to retrieve the linked value B

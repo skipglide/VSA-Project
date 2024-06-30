@@ -1,6 +1,8 @@
 import numpy as np
 from vsa.memory import CleanUpMemory, LookUpMemory, SymbolLibrary
 import vsa.vector as v
+import vsa.connect as con
+
 from vsa.utils import TimeCalls
 d = 1000
 
@@ -20,18 +22,18 @@ print(f"similarity of converted vector: {v.similarity(a, a_array)}") # Should eq
 
 # Add symbol to clean up memory and recover it
 cleanup.add(a)
-print("Generating Noise")
+print("\nGenerating Noise")
 for i in range(1, 9): # Add some noise
     cleanup.add(v.generate_symbol(d))
 unsorted_list = cleanup.return_similarities(a)
 top_result = v.best_match(unsorted_list)
 
-print("Testing cleanup")
+print("\nTesting cleanup")
 print(a.shape, top_result.shape)
 print(f"a simu. score to clean up retrieval: {v.similarity(a, top_result)}") # Should equal exactly 1.0
 
 # Create a noisy symbol and clean it up
-print("Testing noisy cleanup")
+print("\nTesting noisy cleanup")
 noisy_symbol = v.bundle(a, v.generate_symbol(d))
 print(v.similarity(a, noisy_symbol)) # Should be less than one, but greater than 0.1
 unsorted_list = cleanup.return_similarities(noisy_symbol)
@@ -39,9 +41,10 @@ top_result = v.best_match(unsorted_list)
 print(f"a simu. score to noisy-clean up retrieval: {v.similarity(a, top_result)}") # Should equal exactly 1.0
 
 # Test Bind operation
-print("Testing noisy cleanup")
+print("\nTesting noisy cleanup")
 ac = v.bind(a, c)
 bc = v.bind(b, c)
+
 print(f"a simularity to b: {v.similarity(a, b)}")
 print(f"ac simularity to bc: {v.similarity(ac, bc)}")
 a_ = v.unbind(ac, c)
@@ -53,11 +56,15 @@ for i in range(1,3):
     _ = v.generate_symbol(d)
     _ = v.bundle(a, _)
     cleanup.add(_)
-print(f"there are {len(v.threshold(cleanup.return_similarities(a), 0.1))} vectors above threshold {cleanup.threshold}")
+print(f"\nThere are {len(v.threshold(cleanup.return_similarities(a), 0.1))} vectors above threshold {cleanup.threshold}")
 
-s = v.sequence(lookup, a, b, c) # Create the sequence
+s = con.sequence(lookup, a, b, c) # Create the sequence
 sequences.add(s) # Add it to sequence clean up
-for i in range(1, 99): # Add some noise
-    lookup.add_symbol_for(v.generate_permutation(d))
+for i in range(1, 10): # Add some noise
+    lookup.add_symbol_for(con.generate_permutation(d))
 # Now we're retreive the permutation vector for s in lookup
-permutation_vector = lookup.return_simularities(s)
+permutation_vector = lookup.return_similarities(s)
+
+print("\nGenerate Symbol Stats")
+for key, value in v.generate_symbol.stats().items():
+    print(f"{key}: {value * 1000000:.4g} μs")
