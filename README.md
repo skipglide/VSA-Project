@@ -1,2 +1,7 @@
 # VSA-Project
-Implimentation of Linked Lists using hyper dimensional computing principles.
+
+Some random examples of VSA. Impliments linked lists and a pattern recognizer for raw text.
+
+## Linked Lists
+
+Implimenting link lists is simple.
