@@ -20,5 +20,13 @@ mister_scan = Scanner(symbol_library, pattern_cleanup, permutation_lookup, permu
 
 thingie = reuters.raw()
 
-for thing in thingie[:50]:
+mister_scan.token_memory = thingie[:9] # Priming the memory
+
+for thing in thingie[:5000]:
     mister_scan.read_token(thing)
+
+pattern_count = mister_scan.pattern_count
+for key, value in sorted(pattern_count.items()[:20], key=lambda x: x[1], reverse=True): # sort by count, greatest first
+    print(f"{key}: {value}")
+
+print(f"\nThere are {len(pattern_count.items())} recorded patterns!")
