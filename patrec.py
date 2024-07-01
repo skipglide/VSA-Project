@@ -20,8 +20,5 @@ mister_scan = Scanner(symbol_library, pattern_cleanup, permutation_lookup, permu
 
 thingie = reuters.raw()
 
-from time import sleep
-
-for thing in thingie:
-    sleep(0.1)
-    print(thing)
+for thing in thingie[:50]:
+    mister_scan.read_token(thing)

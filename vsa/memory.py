@@ -86,16 +86,16 @@ class SymbolLibrary(Memory):
     self.library = dict()
 
   def already_there(self, x):
-    if x in self.memory.keys():
+    if x in self.library.keys():
       return True
     else:
       return False
 
   def add_key(self, key):
-    self.memory[key] = generate_symbol(self.dimensionality)
+    self.library[key] = generate_symbol(self.dimensionality)
 
   def retrieve_symbol(self, key):
-    return self.memory[key]
+    return self.library[key]
 
 
 class LookUpMemory(Memory):
