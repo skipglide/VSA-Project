@@ -71,7 +71,7 @@ class Scanner:
       # Okay, now it needs to take that list of char and encode them into symbols
       symbols = [self.get_symbol_with_char(char) for char in char_list]
       # Okay, now that you have those symbols, now you need to turn them into a permutation sequence
-      sequence_symbol = array_to_sequence(symbols)
+      sequence_symbol = self.array_to_sequence(symbols)
       # Cool, with that permutation sequence, we can now record its occurance in the update_pattern_count
       string = ''.join(char_list)
       self.update_pattern_count(string)
