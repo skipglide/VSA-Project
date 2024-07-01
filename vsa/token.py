@@ -42,11 +42,11 @@ class Scanner:
     return s
 
   def update_pattern_count(self, string):
-    self.pattern_count[string] = pattern_counts.get(key, 0) + 1
+    self.pattern_count[string] = self.pattern_count.get(string, 0) + 1
 
   def update_token_memory(self, symbol):
-    self.token_memory.insert(symbol)
-    self.token_memory.pop(-1)
+    self.token_memory.insert(0, symbol) # First in line
+    self.token_memory.pop(-1) # Get rid of last entry
 
   def read_token(self, char):
     t = get_unicode_number(char)
@@ -57,9 +57,9 @@ class Scanner:
       symbol = self.symbol_library.retrieve_symbol(t)
       self.pattern_cleanup.add(symbol)
       self.update_token_memory(t)
-    # Tokens are patterns too
-    symbol = self.symbol_library.retrieve_symbol(t)
-    self.update_pattern_count(symbol)
+    # I guess we just update the memory?
+    self.update_memory()
+    pass
 
   def get_symbol_with_char(self, char):
     return self.symbol_library.retrieve_symbol(get_unicode_number(char))
