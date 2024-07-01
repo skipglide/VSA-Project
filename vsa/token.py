@@ -1,7 +1,7 @@
-from numpy import ones
-from vector import generate_symbol, bind, array_to_tuple,\
-   tuple_to_array, permute_forward, generate_permutation
-
+from numpy import ones, float16
+from .vector import generate_symbol
+from .connect import generate_permutation, \
+  permute_forward, permute_inverse
 def get_unicode_number(char):
   """
   Returns the unicode number from a single character.
