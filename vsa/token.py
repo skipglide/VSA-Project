@@ -21,7 +21,7 @@ class Scanner:
     # TODO: add check that all these memories are the same dimensionality
 
     self.token_window = 10 # length of token memory
-    self.token_memory = [] # I store chars
+    self.token_memory = list() # I store chars
     self.symbol_memory = [zeros(symbol_library.dimensionality, dtype=float16) for _ in range(self.token_window)] # I store the corresponding symbols that represent each char
 
     self.pattern_count = dict()

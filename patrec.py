@@ -20,7 +20,9 @@ mister_scan = Scanner(symbol_library, pattern_cleanup, permutation_lookup, permu
 
 thingie = reuters.raw()
 
-mister_scan.token_memory = thingie[:9] # Priming the memory
+for char in thingie[:9]: # Priming the memory
+    mister_scan.token_memory.append(char)
+
 
 for thing in thingie[:5000]:
     mister_scan.read_token(thing)
