@@ -40,9 +40,9 @@ L<sub>P</sub>, Lookup Memory for Permutations
 
 ### Procedure
 1. First you take your symbol A & B and add them to C<sub>E</sub>, this way we can perform a vector query with any symbols related to either A or B and retrieve the original symbols. We have our vector A which we want linked to B.
-
+<p align="center">
 A, B
-
+</p>
 2. Now we generate a permutation symbol (p<sub>A</sub>) and the corresponding matrix (M<sub>A</sub>) for the symbol 'A'
 
 p<sub>A</sub>, M<sub>A</sub>
