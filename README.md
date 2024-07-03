@@ -8,9 +8,13 @@ Implimenting link lists is simple. First some definitions:
 
 ### Definitions
 Symbol: A symbol is a high dimensional vector which has certain properties which make it useful for symbolic computing.
+
 Cleanup Memory: Used to clean up a noisy vector, very critical for sharing information across domains. This term gets used interchangably with the word "vector".
-Lookup Memory: This takes a symbol and directly associates one with something else; this something can be another symbol or a matrix or an image of something
+
+Lookup Memory: This takes a symbol and directly associates one with something else; this something can be another symbol or a matrix or an image of something.
+
 Symbol Library: This is an implimentation of a hash table to take a key and retreive a symbol, it is like the inverse of Lookup Memory. This can be useful for language processing as we can use a string to see if there are any symbols associated with them.
+
 Pointer: In this context, a pointer is a symbol that contains information that can be extracted and processed to find information connected to some other symbol.
 
 A, Symbol 'A'
