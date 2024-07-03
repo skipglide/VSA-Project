@@ -44,19 +44,19 @@ L<sub>P</sub>, Lookup Memory for Permutations
 A, B
 </p>
 2. Now we generate a permutation symbol (p<sub>A</sub>) and the corresponding matrix (M<sub>A</sub>) for the symbol 'A'
-
+<p align="center">
 p<sub>A</sub>, M<sub>A</sub>
-
+</p>
 3. We associate pA & M<sub>a</sub> in L<sub>P</sub>, if we have the the vector P<sub>A</sub>, we can easily lookup the corresponding matrix with a query to L<sub>P</sub>
-
+<p align="center">
 LP
-
+</p>
 4. Now we generate the pointer to B (P<sub>B</sub>) with an inverse permutation operation:
-
+<p align="center">
 P<sub>B</sub> = M<sub>A</sub>***-1***(B)
-
+</p>
 5. Now that we have A, p<sub>A</sub>, & P<sub>B</sub>, we can bundle these vectors together to create a link symbol for A (L<sub>A</sub>)
-
+<p align="center">
 L<sub>A</sub> = A + p<sub>A</sub> + P<sub>B</sub>
-
+</p>
 6. Now add L<sub>A</sub> to C<sub>L</sub>
