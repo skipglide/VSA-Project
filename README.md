@@ -42,16 +42,21 @@ L<sub>P</sub>, Lookup Memory for Permutations
 1. First you take your symbol A & B and add them to C<sub>E</sub>, this way we can perform a vector query with any symbols related to either A or B and retrieve the original symbols. We have our vector A which we want linked to B.
 
 A, B
+
 2. Now we generate a permutation symbol (p<sub>A</sub>) and the corresponding matrix (M<sub>A</sub>) for the symbol 'A'
 
 p<sub>A</sub>, M<sub>A</sub>
+
 3. We associate pA & M<sub>a</sub> in L<sub>P</sub>, if we have the the vector P<sub>A</sub>, we can easily lookup the corresponding matrix with a query to L<sub>P</sub>
 
 LP
+
 4. Now we generate the pointer to B (P<sub>B</sub>) with an inverse permutation operation:
 
 P<sub>B</sub> = M<sub>A</sub>***-1***(B)
+
 5. Now that we have A, p<sub>A</sub>, & P<sub>B</sub>, we can bundle these vectors together to create a link symbol for A (L<sub>A</sub>)
 
 L<sub>A</sub> = A + p<sub>A</sub> + P<sub>B</sub>
+
 6. Now add L<sub>A</sub> to C<sub>L</sub>
