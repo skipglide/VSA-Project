@@ -26,6 +26,11 @@ class Scanner:
 
     self.pattern_count = dict()
 
+  def priming(self, arr):
+    for char in arr:
+      self.token_memory.append(char)
+      self.symbol_library.add_key(char)
+
   def store_permutation(self, perm):
     p = generate_symbol(self.dimensionality)
     self.permutation_lookup.add_association(p, perm)
@@ -39,8 +44,8 @@ class Scanner:
     s = arr[0] # The begining of the sequence
     for symbol in arr[1:-1]: # Leave out the first element
       s = bundle(permute_forward(s, perm), symbol)
-    p = store_permutation
-    self.perm_cleanup.add(p)
+    p = self.store_permutation
+    self.permutation_cleanup.add(p)
     s += p
     return s
 
@@ -68,8 +73,8 @@ class Scanner:
 
   def update_model(self):
     # You can assume that any unicode number has a corresponding symbol in symbol_library
-    for i in range(self.token_window - 1): # Scan for patterns of a certain size from 
-      char_list = self.token_memory[0:i]
+    for i in range(1, self.token_window): # Scan for patterns of a certain size from 
+      char_list = self.token_memory[:i]
       # Okay, now it needs to take that list of char and encode them into symbols
       symbols = [self.get_symbol_with_char(char) for char in char_list]
       # Okay, now that you have those symbols, now you need to turn them into a permutation sequence
